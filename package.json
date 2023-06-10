@@ -1,0 +1,31 @@
+{
+  "name": "crypto-trade-softuni-exam",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "start": "nodemon src/index.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/nmargenov/Crypto-Trade-softuni-exam.git"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/nmargenov/Crypto-Trade-softuni-exam/issues"
+  },
+  "homepage": "https://github.com/nmargenov/Crypto-Trade-softuni-exam#readme",
+  "dependencies": {
+    "bcrypt": "^5.1.0",
+    "cookie-parser": "^1.4.6",
+    "express": "^4.18.2",
+    "express-handlebars": "^7.0.7",
+    "jsonwebtoken": "^9.0.0",
+    "mongoose": "^7.2.3"
+  },
+  "devDependencies": {
+    "nodemon": "^2.0.22"
+  }
+}
