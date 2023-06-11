@@ -37,6 +37,20 @@ function checkIfUserHasBoughtTheCrypto(crypto,userId){
 function deleteCrypto(cryptoId){
     return Crypto.findByIdAndDelete(cryptoId);
 }
+function editCrypto(cryptoId,name,image,price,description,paymentMethod){
+    if(!pattern.test(image)){
+        throw new Error("Invalid image URL!");
+    }
+
+    const crypto={
+        name,
+        image,
+        price,
+        description,
+        paymentMethod
+    }
+    return Crypto.findByIdAndUpdate(cryptoId,crypto,{runValidators:true});
+}
 module.exports = {
     getAllCrypto,
     createCrypto,
@@ -44,4 +58,5 @@ module.exports = {
     buyCrypto,
     checkIfUserHasBoughtTheCrypto,
     deleteCrypto,
+    editCrypto,
 }
