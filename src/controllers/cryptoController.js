@@ -1,4 +1,4 @@
-const { getAllCrypto, createCrypto } = require('../managers/cryptoManager');
+const { getAllCrypto, createCrypto, getCryptoById, buyCrypto, checkIfUserHasBoughtTheCrypto } = require('../managers/cryptoManager');
 const { mustBeAuth } = require('../middlewares/authMiddleware');
 const { getErrorMessage } = require('../utils/errorHelper');
 const generateOptions = require('../utils/generateOptions');
@@ -8,7 +8,6 @@ const router = require('express').Router();
 router.get('/catalog',async(req,res)=>{
     try{
         const crypto = await getAllCrypto().lean();
-        console.log(crypto)
         const hasCrypto = crypto.length>0;
         res.status(302).render('crypto/catalog',{hasCrypto,crypto});
     }catch(err){
@@ -38,6 +37,47 @@ router.post('/create',mustBeAuth,async(req,res)=>{
         const error = getErrorMessage(err);
         const options = generateOptions(paymentMethod);
         res.status(400).render('crypto/create',{error,name,image,options,price,description,paymentMethod});
+    }
+});
+
+router.get('/:cryptoId/details',async(req,res)=>{
+    try{
+        const cryptoId = req.params.cryptoId;
+        const crypto = await getCryptoById(cryptoId).lean();
+        if(!crypto){
+            throw new Error();
+        }
+
+        const loggedUser = req.user?._id;
+
+        const isOwner = loggedUser && crypto.owner == loggedUser;
+        const notOwner = !isOwner;
+        const hasBought = notOwner && checkIfUserHasBoughtTheCrypto(crypto,loggedUser);
+
+        res.status(302).render('crypto/details',{crypto,loggedUser,isOwner,notOwner,hasBought,});
+    }catch(err){
+        res.status(404).render('404');
+    }
+});
+
+router.get('/:cryptoId/buy',mustBeAuth,async(req,res)=>{
+    try{
+        const cryptoId = req.params.cryptoId;
+        const loggedUser = req.user._id;
+
+        const crypto = await getCryptoById(cryptoId);
+        if(!crypto || crypto.owner == loggedUser){
+            throw new Error();
+        }
+        if(checkIfUserHasBoughtTheCrypto(crypto,loggedUser)){
+            throw new Error();
+        }
+
+        await buyCrypto(cryptoId,loggedUser);
+        res.redirect(`/crypto/${cryptoId}/details`);
+        
+    }catch(err){
+        res.status(404).render('404');
     }
 });
 

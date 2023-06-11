@@ -22,7 +22,21 @@ function createCrypto(name,image,price,description,paymentMethod,owner){
     return Crypto.create(crypto);
 }
 
+function getCryptoById(cryptoId){
+    return Crypto.findById(cryptoId);
+}
+
+function buyCrypto(cryptoId,userId){
+    return Crypto.findByIdAndUpdate(cryptoId,{$push:{boughtBy:userId}});
+}
+
+function checkIfUserHasBoughtTheCrypto(crypto,userId){
+    return crypto.boughtBy.map(c=>c.toString()).includes(userId);
+}
 module.exports = {
     getAllCrypto,
     createCrypto,
+    getCryptoById,
+    buyCrypto,
+    checkIfUserHasBoughtTheCrypto,
 }
