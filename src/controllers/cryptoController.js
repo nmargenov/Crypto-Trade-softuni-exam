@@ -1,4 +1,4 @@
-const { getAllCrypto, createCrypto, getCryptoById, buyCrypto, checkIfUserHasBoughtTheCrypto } = require('../managers/cryptoManager');
+const { getAllCrypto, createCrypto, getCryptoById, buyCrypto, checkIfUserHasBoughtTheCrypto, deleteCrypto } = require('../managers/cryptoManager');
 const { mustBeAuth } = require('../middlewares/authMiddleware');
 const { getErrorMessage } = require('../utils/errorHelper');
 const generateOptions = require('../utils/generateOptions');
@@ -76,6 +76,23 @@ router.get('/:cryptoId/buy',mustBeAuth,async(req,res)=>{
         await buyCrypto(cryptoId,loggedUser);
         res.redirect(`/crypto/${cryptoId}/details`);
         
+    }catch(err){
+        res.status(404).render('404');
+    }
+});
+
+router.get('/:cryptoId/delete',mustBeAuth,async(req,res)=>{
+    try{
+        const cryptoId = req.params.cryptoId;
+        const loggedUser = req.user._id;
+
+        const crypto = await getCryptoById(cryptoId);
+        if(!crypto || crypto.owner != loggedUser){
+            throw new Error();
+        }
+
+        await deleteCrypto(cryptoId);
+        res.redirect('/crypto/catalog');
     }catch(err){
         res.status(404).render('404');
     }

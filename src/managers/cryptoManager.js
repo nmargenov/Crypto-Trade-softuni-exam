@@ -33,10 +33,15 @@ function buyCrypto(cryptoId,userId){
 function checkIfUserHasBoughtTheCrypto(crypto,userId){
     return crypto.boughtBy.map(c=>c.toString()).includes(userId);
 }
+
+function deleteCrypto(cryptoId){
+    return Crypto.findByIdAndDelete(cryptoId);
+}
 module.exports = {
     getAllCrypto,
     createCrypto,
     getCryptoById,
     buyCrypto,
     checkIfUserHasBoughtTheCrypto,
+    deleteCrypto,
 }
